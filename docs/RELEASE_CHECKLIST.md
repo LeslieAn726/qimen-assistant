@@ -25,7 +25,7 @@ git rev-list --objects --all
 - `.env*`、API Key、日志、临时文件
 - `daily-records.json`、`settings.json`、备份和 Electron userData
 - PPT、ZIP、预览产物和开发机绝对路径
-- 本地 `archive/desktop-pet/` 研究归档
+- 第三方角色图片、动画素材或来源不明的非代码资源
 
 如果 Git 历史曾包含上述敏感数据或第三方素材，只报告具体 commit/路径；在获得维护者确认前不要自动执行 filter-repo、rebase 或强制推送。
 
@@ -41,7 +41,7 @@ npm run build:win
 - [ ] `dist/每日奇门助手-Setup-2.6.0-beta.exe` 已生成
 - [ ] `dist/win-unpacked/每日奇门助手.exe` 可启动
 - [ ] ASAR 包含 `assets/icon.ico`
-- [ ] ASAR 不包含 `assets/pets`、`public/pet`、`pet`、归档、用户数据、备份、环境文件、测试或开发产物
+- [ ] ASAR 不包含归档、用户数据、备份、环境文件、测试、第三方角色素材或开发产物
 - [ ] 启动后只创建每日奇门助手主窗口
 
 ## Release 附件

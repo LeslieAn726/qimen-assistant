@@ -37,6 +37,8 @@ This project contains code derived from qfdk/qimen.
 
 The upstream MIT license notice is preserved.
 
+The upstream repository currently publishes its software under the MIT License. Its `LICENSE` contains `Copyright (c) 2017` without an explicitly named copyright holder. This project preserves that notice as published and does not infer, replace, or invent the original copyright holder.
+
 Substantial modifications and new components for “每日奇门助手” were developed in 2026.
 
 ## 非代码素材

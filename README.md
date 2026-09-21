@@ -19,9 +19,25 @@
 - Windows Electron 桌面窗口、单实例运行与本地 JSON 数据持久化
 - 设置、历史记录、备份与恢复
 
-## 截图
+## Screenshots / 截图
 
-截图目录位于 [`docs/screenshots/`](docs/screenshots/)。命名、脱敏与提交要求见 [docs/screenshots/README.md](docs/screenshots/README.md)。
+### 今日助手
+
+![今日助手](docs/screenshots/today.png)
+
+### 实时奇门盘
+
+![实时奇门盘](docs/screenshots/realtime-qimen.png)
+
+### 自定义奇门排盘
+
+![自定义奇门排盘](docs/screenshots/custom-qimen.png)
+
+### 深色星空 UI
+
+![深色星空 UI](docs/screenshots/settings-or-ui.png)
+
+截图使用全新隔离测试数据生成，不包含 API Key、私人计划、用户路径或第三方角色内容。截图提交规范见 [docs/screenshots/README.md](docs/screenshots/README.md)。
 
 ## 技术栈
 
@@ -34,7 +50,7 @@
 ## 本地开发
 
 ```bash
-npm install
+npm ci
 npm test
 npm start
 ```
