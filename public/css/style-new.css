@@ -1,0 +1,769 @@
+body {
+    margin: 0;
+    padding-bottom: 60px;
+    padding-top: 60px;
+    background-color: #f5f5f5;
+    font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+/* 页面标题 */
+.page-title {
+    margin: 15px 0;
+    color: #333;
+    font-weight: bold;
+}
+
+/* 基本信息显示 */
+.basic-info {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.info-item {
+    width: 48%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px dashed #eee;
+}
+
+.info-item strong {
+    color: #555;
+}
+
+/* 奇门盘样式 */
+.qimen-pan {
+    margin: 0 auto 30px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.pan-outer {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 九宫格网格 */
+.pan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 1/1;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+}
+
+/* 宫格样式 */
+.gong {
+    position: relative;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    padding: 0;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+}
+.gong:nth-child(3n) {
+    border-right: none;
+}
+.gong:nth-child(7), .gong:nth-child(8), .gong:nth-child(9) {
+    border-bottom: none;
+}
+
+/* 宫位吉凶颜色 - 暂时去掉背景色 */
+.gong.da_ji {
+    background-color: #fff;
+}
+
+.gong.xiao_ji {
+    background-color: #fff;
+}
+
+.gong.ping {
+    background-color: #fff;
+}
+
+.gong.xiao_xiong {
+    background-color: #fff;
+}
+
+.gong.da_xiong {
+    background-color: #fff;
+}
+
+
+/* 值符值使下划线标记 */
+.gong.zhifu .gong-jiuxing {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 3px;
+}
+
+.gong.zhishi .gong-bamen {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 3px;
+}
+
+/* 新的宫位布局 - 根据参考图 */
+.gong-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+        "gong-dizhi  gong-bashen  gong-tianganfang"
+        "gong-dizhi2 gong-jiuxing gong-tianganfang2"
+        "gong-gongname2 gong-bamen gong-tiangan"
+        "gong-gongname gong-number gong-dipan";
+    height: 100%;
+    width: 100%;
+    position: relative;
+    padding: 4px;
+    gap: 0;
+}
+
+/* 地支(暗干) - 左上角灰色 */
+.gong-dizhi {
+    grid-area: gong-dizhi;
+    text-align: left;
+    font-size: 18px;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* 地支2 - 左中上灰色 */
+.gong-dizhi2 {
+    grid-area: gong-dizhi2;
+    text-align: left;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    visibility: hidden;
+}
+
+/* 八神 - 中上位置 */
+.gong-bashen {
+    grid-area: gong-bashen;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 天干方位(标记区域) - 右上角，与天盘干地盘干垂直对齐 */
+.gong-tianganfang {
+    grid-area: gong-tianganfang;
+    text-align: center;
+    font-size: 18px;
+    color: #aaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+/* 天干方位2 - 右中上灰色 */
+.gong-tianganfang2 {
+    grid-area: gong-tianganfang2;
+    text-align: right;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    visibility: hidden;
+}
+
+/* 八门 - 中间位置 */
+.gong-bamen {
+    grid-area: gong-bamen;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.gong-bamen:empty {
+    display: none;
+}
+
+
+/* 九星 - 居中显示 */
+.gong-jiuxing {
+    grid-area: gong-jiuxing;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
+
+/* 宫位名 - 左下角 */
+.gong-gongname {
+    grid-area: gong-gongname;
+    text-align: left;
+    font-size: 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-bottom: 2px;
+}
+
+/* 宫位名2 - 左中位置 */
+.gong-gongname2 {
+    grid-area: gong-gongname2;
+    text-align: left;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    visibility: hidden;
+}
+
+/* 宫位数字 - 中下位置 */
+.gong-number {
+    grid-area: gong-number;
+    text-align: center;
+    font-size: 18px;
+    color: #000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 2px;
+}
+
+/* 天干 - 右侧位置，与八门水平对齐 */
+.gong-tiangan {
+    grid-area: gong-tiangan;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+
+/* 地盘干 - 右下角 */
+.gong-dipan {
+    grid-area: gong-dipan;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 2px;
+}
+
+/* 特殊元素样式 */
+.circle-mark {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 0;
+}
+
+.yellow-circle {
+    background-color: #FFEB3B; /* 黄色圆形标记 */
+}
+
+.grey-circle {
+    background-color: #E0E0E0; /* 灰色圆形标记 */
+}
+
+.green-circle {
+    background-color: #4CAF50; /* 绿色圆形标记 - 马星 */
+    color: white;
+}
+
+/* 天盘干方框标记 - 日柱旬首六仪 */
+.gong-tiangan.tianpan-boxed {
+    border: 2px solid;
+    border-radius: 3px;
+    padding: 1px 4px;
+}
+
+/* 五行边框颜色 */
+.border-mu { border-color: #4CAF50 !important; }    /* 木-绿色 */
+.border-huo { border-color: #F44336 !important; }   /* 火-红色 */
+.border-tu { border-color: #996633 !important; }    /* 土-褐土色 */
+.border-jin { border-color: #FF8109 !important; }   /* 金-橙金色 */
+.border-shui { border-color: #2196F3 !important; }  /* 水-蓝色 */
+
+/* 图例 */
+.pan-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.legend-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-label {
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+    min-width: 80px;
+}
+
+.legend-box {
+    padding: 2px 6px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: #fff;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* 宫位详解 */
+.gong-details {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gong-details .col-md-4 {
+    margin-bottom: 15px;
+}
+
+/* 面板样式 */
+.panel {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.panel-heading {
+    font-weight: bold;
+}
+
+.panel-body {
+    color: #333;
+}
+
+/* 底部样式 */
+.footer {
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #f5f5f5;
+    padding-top: 15px;
+    text-align: center;
+    border-top: 1px solid #e7e7e7;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .info-item {
+        width: 100%;
+    }
+
+    .item {
+        font-size: 14px;
+    }
+
+    .legend-label {
+        min-width: 70px;
+        font-size: 13px;
+    }
+
+    .legend-box {
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .item {
+        font-size: 12px;
+    }
+
+    .legend-label {
+        min-width: 100%;
+        margin-bottom: 3px;
+    }
+
+    .legend-box {
+        font-size: 11px;
+    }
+}
+
+/* 标签样式 */
+.label-da_ji, .da_ji {
+    background-color: #4CAF50;
+    color: white !important;
+}
+
+.label-xiao_ji, .xiao_ji {
+    background-color: #8BC34A;
+    color: white !important;
+}
+
+.label-ping, .ping {
+    background-color: #fff;
+    color: #333 !important;
+}
+
+.label-xiao_xiong, .xiao_xiong {
+    background-color: #FF9800;
+    color: white !important;
+}
+
+.label-da_xiong, .da_xiong {
+    background-color: #F44336;
+    color: white !important;
+}
+
+
+/* 五行属性颜色 */
+.wuxing-mu { color: #4CAF50 !important; }    /* 木-绿色 */
+.wuxing-huo { color: #F44336 !important; }   /* 火-红色 */
+.wuxing-tu { color: #996633 !important; }    /* 土-褐土色 */
+.wuxing-jin { color: #FF8109 !important; }   /* 金-橙金色 */
+.wuxing-shui { color: #2196F3 !important; }  /* 水-蓝色 */
+.wuxing-purple { color: #9C27B0 !important; } /* 特殊-紫色 */
+
+
+/* 奇门专用颜色 */
+.tian-gan {
+    color: #4CAF50; /* 天干颜色 */
+}
+
+.di-zhi {
+    color: #666; /* 地支颜色-灰色 */
+}
+
+.separator-line {
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+    margin: 5px 0;
+}
+
+/* 辅助颜色样式 */
+.text-center {
+    text-align: center;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-small {
+    font-size: 10px;
+}
+
+/* 界面紧凑化样式 */
+body {
+    padding-top: 50px;
+    padding-bottom: 40px;
+}
+.page-title {
+    margin: 10px 0;
+    font-size: 22px;
+}
+.basic-info {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+.info-item {
+    width: 32%;
+    margin-bottom: 5px;
+    padding: 3px;
+}
+.qimen-pan {
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.pan-grid {
+    gap: 0;
+}
+.panel {
+    margin-bottom: 15px;
+}
+.panel-body {
+    padding: 10px;
+}
+.gong-details .col-md-4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 10px;
+}
+.gong-details .panel-body {
+    padding: 8px;
+}
+.gong-details .panel-body p {
+    margin-bottom: 5px;
+}
+.gong-explain {
+    font-size: 12px;
+    margin-top: 3px;
+    line-height: 1.4;
+}
+.suggestion-list li {
+    margin-bottom: 4px;
+}
+.footer {
+    height: 40px;
+    padding-top: 10px;
+}
+
+@media (max-width: 992px) {
+    .info-item {
+        width: 49%;
+    }
+}
+.copy-btn-row {
+    margin: 18px 0 6px;
+}
+.copy-btn-row .btn {
+    padding: 8px 22px;
+    font-size: 15px;
+}
+
+/* 复制结果轻提示：固定定位，不参与文档流，点击时不会挤动页面 */
+/* 注意类名前缀 qm-，避开 bootstrap 的 .show/.in/.fade 等工具类 */
+.qm-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    z-index: 2000;
+    max-width: 90vw;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: rgba(51, 51, 51, .92);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+}
+.qm-toast-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+.qm-toast-ok {
+    background-color: rgba(76, 174, 76, .95);
+}
+.qm-toast-err {
+    background-color: rgba(201, 48, 44, .95);
+}
+
+/* 桌面应用导航与设置页 */
+.app-navbar .navbar-brand {
+    font-weight: 600;
+}
+
+.settings-page,
+.about-page,
+.error-page {
+    padding-top: 20px;
+}
+
+.settings-summary dd {
+    min-height: 22px;
+    margin-bottom: 8px;
+}
+
+.path-value {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.settings-status {
+    display: inline-block;
+    margin-left: 12px;
+}
+
+.backup-list {
+    margin-bottom: 0;
+}
+
+.backup-row {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.product-about {
+    padding: 30px;
+}
+
+.license-text {
+    background: #fafafa;
+    max-height: 360px;
+    overflow: auto;
+    white-space: pre-wrap;
+}
+
+.error-page {
+    max-width: 760px;
+}
+
+/* AI 辅助建议与传统规则分析保持独立的视觉区域 */
+.ai-advice-panel {
+    border-width: 2px;
+    margin-top: 5px;
+}
+
+.ai-advice-panel .panel-title .label {
+    font-size: 11px;
+    margin-left: 8px;
+    vertical-align: 1px;
+}
+
+.ai-boundary-note {
+    border-bottom: 1px solid #d9edf7;
+    color: #52727f;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+}
+
+.ai-generated-meta {
+    font-size: 12px;
+}
+
+.ai-disclaimer {
+    color: #777;
+    font-size: 12px;
+    margin: 12px 0 0;
+}
+
+/* 今日黄历：独立于奇门盘与 AI 建议的离线信息区 */
+.almanac-panel {
+    border-width: 2px;
+}
+
+.almanac-panel .panel-title .label {
+    font-size: 11px;
+    margin-left: 8px;
+    vertical-align: 1px;
+}
+
+.almanac-summary > div {
+    margin-bottom: 8px;
+}
+
+.almanac-summary strong,
+.almanac-summary span {
+    display: block;
+}
+
+.almanac-summary span {
+    margin-top: 3px;
+}
+
+.almanac-jieqi {
+    background: #fffaf0;
+    border: 1px solid #faebcc;
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-top: 4px;
+    padding: 8px 10px;
+}
+
+.almanac-section {
+    border-top: 1px solid #eee;
+    margin-top: 12px;
+    padding-top: 8px;
+}
+
+.almanac-section h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 4px 0 8px;
+}
+
+.almanac-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 24px;
+}
+
+.almanac-tags .label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 5px 7px;
+}
+
+.almanac-inline-list {
+    line-height: 1.7;
+}
+
+.almanac-directions > div,
+.almanac-traditional .row > div {
+    line-height: 1.6;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+    .almanac-jieqi {
+        display: block;
+    }
+
+    .almanac-jieqi > span {
+        display: block;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .backup-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .settings-status {
+        display: block;
+        margin: 10px 0 0;
+    }
+}

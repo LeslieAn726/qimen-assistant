@@ -1,0 +1,38 @@
+{
+  "name": "qimen",
+  "version": "2.6.0-beta",
+  "productName": "每日奇门助手",
+  "description": "本地优先的奇门遁甲、黄历、每日记录与可选 AI 桌面助手",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "node --test \"test/*.test.js\"",
+    "desktop": "electron .",
+    "build:win": "electron-builder --win nsis --x64",
+    "brand:build-icon": "electron scripts/build-app-icon.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeslieAn726/qimen-assistant.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10"
+  },
+  "bugs": {
+    "url": "https://github.com/LeslieAn726/qimen-assistant/issues"
+  },
+  "homepage": "https://github.com/LeslieAn726/qimen-assistant#readme",
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^4.22.3",
+    "lunar-javascript": "^1.7.3"
+  },
+  "devDependencies": {
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3",
+    "nodemon": "^3.1.10"
+  }
+}

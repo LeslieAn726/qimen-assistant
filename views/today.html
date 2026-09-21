@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <script>
+        (function () {
+            try {
+                var tz = '';
+                try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+                var val = encodeURIComponent(tz + '|' + (-new Date().getTimezoneOffset()));
+                var re = /(?:^|;\s*)qmtz=([^;]*)/;
+                var before = re.exec(document.cookie);
+                document.cookie = 'qmtz=' + val + ';path=/;max-age=31536000;samesite=lax';
+                var after = re.exec(document.cookie);
+                if (after && after[1] === val && (!before || before[1] !== val)
+                    && location.search.indexOf('date=') === -1) {
+                    location.reload();
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>今日助手 - 每日奇门助手</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/theme-dark-star.css">
+</head>
+<body class="theme-dark-star page-today">
+    <%- include('navigation', {activePage: 'today'}) %>
+
+    <div class="container">
+        <section class="today-hero" aria-labelledby="today-hero-title">
+            <div>
+                <span class="page-kicker">✦ 今日星象</span>
+                <h1 id="today-hero-title">每日奇门助手</h1>
+                <p class="today-hero-date">今日 · <%= page.date %></p>
+                <p class="today-hero-quote">静观其变，顺势而行</p>
+            </div>
+            <div class="today-hero-meta" aria-label="今日时间信息">
+                <span><small>当前时辰</small><strong><%= page.currentShichen %></strong></span>
+                <span><small>当前节气</small><strong><%= qimen.juShu && qimen.juShu.jieQiName || '—' %></strong></span>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2 class="page-title">今日概览</h2>
+                <form class="form-inline" action="/today" method="get" style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label for="viewDate">查看日期</label>
+                        <input class="form-control" id="viewDate" type="date" name="date" value="<%= page.date %>" required>
+                    </div>
+                    <button class="btn btn-default" type="submit">查看</button>
+                    <a class="btn btn-link" href="/today">返回今天</a>
+                </form>
+
+                <div class="basic-info">
+                    <div class="info-item"><strong>当前日期：</strong><%= page.date %></div>
+                    <div class="info-item"><strong>当前时间：</strong><%= page.time %></div>
+                    <div class="info-item"><strong>当前时辰：</strong><%= page.currentShichen %></div>
+                    <div class="info-item"><strong>当前节气：</strong><%= qimen.juShu && qimen.juShu.jieQiName || '' %></div>
+                    <div class="info-item"><strong>阴阳遁：</strong><%= qimen.juShu && qimen.juShu.type === 'yin' ? '阴遁' : '阳遁' %></div>
+                    <div class="info-item"><strong>局数：</strong><%= qimen.juShu && qimen.juShu.fullName || '' %></div>
+                    <div class="info-item"><strong>值符：</strong><%= qimen.zhiFuXing || '' %>（<%= qimen.zhiFuGong || '' %>宫）</div>
+                    <div class="info-item"><strong>值使：</strong><%= qimen.zhiShiMen || '' %>（<%= qimen.zhiShiGong || '' %>宫）</div>
+                    <div class="info-item"><strong>时区：</strong><%= page.timezone %></div>
+                    <div class="info-item"><strong>四柱：</strong>
+                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.year || '' %></span>
+                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.month || '' %></span>
+                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.day || '' %></span>
+                        <span class="label label-primary"><%= qimen.siZhu && qimen.siZhu.time || '' %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="almanacPanel">
+            <div class="col-md-12">
+                <section class="panel panel-warning almanac-panel app-section app-section-primary">
+                    <div class="panel-heading"><h3 class="panel-title">今日黄历 <span class="label label-warning">本地离线计算</span></h3></div>
+                    <div class="panel-body">
+                        <% if (almanacError) { %>
+                            <div class="alert alert-danger" role="alert">
+                                黄历暂时无法加载：<%= almanacError %>。奇门排盘和每日记录仍可正常使用。
+                            </div>
+                        <% } else if (almanac) { %>
+                            <div class="row almanac-summary">
+                                <div class="col-sm-6 col-md-3"><strong>公历</strong><span><%= almanac.solar.date %>　<%= almanac.solar.week %></span></div>
+                                <div class="col-sm-6 col-md-3"><strong>农历</strong><span><%= almanac.lunar.text %></span></div>
+                                <div class="col-sm-6 col-md-3"><strong>干支</strong><span><%= almanac.ganzhi.year %>年　<%= almanac.ganzhi.month %>月　<%= almanac.ganzhi.day %>日</span></div>
+                                <div class="col-sm-6 col-md-3"><strong>生肖</strong><span><%= almanac.zodiac %></span></div>
+                            </div>
+
+                            <div class="almanac-jieqi">
+                                <strong>节气：</strong>
+                                <% if (almanac.jieqi.today) { %><span class="label label-primary">今日 <%= almanac.jieqi.today.name %></span><% } %>
+                                <span>当前节气 <%= almanac.jieqi.current.name %>（<%= almanac.jieqi.current.at %>）</span>
+                                <% if (almanac.jieqi.next) { %><span>下一节气 <%= almanac.jieqi.next.name %>（<%= almanac.jieqi.next.at %>）</span><% } %>
+                            </div>
+
+                            <div class="row almanac-section almanac-yi-ji">
+                                <div class="col-md-6 almanac-column almanac-yi">
+                                    <h4 class="text-success">今日宜</h4>
+                                    <div class="almanac-tags">
+                                        <% almanac.yi.forEach(function(item) { %><span class="label label-success"><%= item %></span><% }); %>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 almanac-column almanac-ji">
+                                    <h4 class="text-danger">今日忌</h4>
+                                    <div class="almanac-tags">
+                                        <% almanac.ji.forEach(function(item) { %><span class="label label-danger"><%= item %></span><% }); %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row almanac-section">
+                                <div class="col-md-6">
+                                    <h4>吉凶神煞</h4>
+                                    <p><strong>吉神：</strong><span class="almanac-inline-list"><%= almanac.goodGods.join('、') || '无' %></span></p>
+                                    <p><strong>凶煞：</strong><span class="almanac-inline-list"><%= almanac.badGods.join('、') || '无' %></span></p>
+                                    <p><strong>建除十二神：</strong><%= almanac.twelveDayOfficer %>日　
+                                        <strong>值日：</strong><%= almanac.dayType.deity %> · <%= almanac.dayType.type %> · <%= almanac.dayType.luck %>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>吉神方位</h4>
+                                    <div class="row almanac-directions">
+                                        <div class="col-xs-6"><strong>财神：</strong><%= almanac.directions.caiShen.direction %>（<%= almanac.directions.caiShen.trigram %>）</div>
+                                        <div class="col-xs-6"><strong>喜神：</strong><%= almanac.directions.xiShen.direction %>（<%= almanac.directions.xiShen.trigram %>）</div>
+                                        <div class="col-xs-6"><strong>福神：</strong><%= almanac.directions.fuShen.direction %>（<%= almanac.directions.fuShen.trigram %>）</div>
+                                        <div class="col-xs-6"><strong>阳贵：</strong><%= almanac.directions.yangGui.direction %>（<%= almanac.directions.yangGui.trigram %>）</div>
+                                        <div class="col-xs-6"><strong>阴贵：</strong><%= almanac.directions.yinGui.direction %>（<%= almanac.directions.yinGui.trigram %>）</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="almanac-section almanac-traditional">
+                                <h4>传统信息</h4>
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-3"><strong>冲煞：</strong>冲<%= almanac.chong.description %>，煞<%= almanac.sha %></div>
+                                    <div class="col-sm-6 col-md-3"><strong>胎神：</strong><%= almanac.taiShen %></div>
+                                    <div class="col-sm-6 col-md-3"><strong>纳音：</strong><%= almanac.naYin %></div>
+                                    <div class="col-sm-6 col-md-3"><strong>六曜：</strong><%= almanac.liuYao %></div>
+                                    <div class="col-sm-6"><strong>彭祖百忌：</strong><%= almanac.pengZu.join('；') %></div>
+                                    <div class="col-sm-6"><strong>二十八宿：</strong><%= almanac.xingXiu.name %><%= almanac.xingXiu.element %><%= almanac.xingXiu.animal %>（<%= almanac.xingXiu.palace %>方，<%= almanac.xingXiu.luck %>）</div>
+                                    <div class="col-sm-6"><strong>季节/月相：</strong><%= almanac.additional.season %> · <%= almanac.additional.moonPhase %></div>
+                                    <div class="col-sm-6"><strong>日禄/日九星：</strong><%= almanac.additional.dayLu %> · <%= almanac.additional.dayNineStar %></div>
+                                    <% const festivals = almanac.additional.festivals.concat(almanac.additional.otherFestivals); %>
+                                    <% if (festivals.length) { %><div class="col-sm-12"><strong>节日：</strong><%= festivals.join('、') %></div><% } %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="qimen-pan app-section app-section-primary">
+                    <h3 class="text-center">当前奇门盘</h3>
+                    <div class="pan-outer">
+                        <div class="pan-grid">
+                            <% const layout = ['4', '9', '2', '3', '5', '7', '8', '1', '6']; %>
+                            <% const gongNumbers = {'1':'一','2':'二','3':'三','4':'四','5':'五','6':'六','7':'七','8':'八','9':'九'}; %>
+                            <% layout.forEach(function(gong) { %>
+                                <div class="gong gong<%= gong %> <%= qimen.jiuGongAnalysis[gong] && qimen.jiuGongAnalysis[gong].jiXiong || 'ping' %> <%= qimen.zhiFuGong === gong ? 'zhifu' : '' %> <%= qimen.zhiShiGong === gong ? 'zhishi' : '' %> <%= qimen.analysis && qimen.analysis.bestGong === gong ? 'best-gong' : '' %>">
+                                    <%- include('standardGongTemplate', {
+                                        baShen: qimen.baShen ? qimen.baShen[gong] : '',
+                                        directionWuxing: JIU_GONG[gong].direction + ' ' + JIU_GONG[gong].element,
+                                        baMen: qimen.baMen ? qimen.baMen[gong] : '',
+                                        jiuXing: qimen.jiuXing ? qimen.jiuXing[gong] : '',
+                                        gongName: JIU_GONG[gong].name,
+                                        gongNumber: gongNumbers[gong],
+                                        tianPan: qimen.sanQiLiuYi ? qimen.sanQiLiuYi[gong] : '',
+                                        diPan: qimen.diPan ? qimen.diPan[gong] : '',
+                                        diZhi: qimen.anGan ? qimen.anGan[gong] : '',
+                                        tianGanFang: '',
+                                        showEmptyCircle: qimen.kongWangGong && qimen.kongWangGong.includes(gong),
+                                        emptyType: 'yellow',
+                                        emptyContent: '空',
+                                        isZhiFu: qimen.zhiFuGong === gong,
+                                        isZhiShi: qimen.zhiShiGong === gong,
+                                        showMaStar: qimen.maStar && qimen.maStar.gong === gong,
+                                        dayXunShou: qimen.dayXunShou
+                                    }) %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (settings.showRuleAnalysis) { %>
+                <div class="panel panel-primary app-section app-section-primary" id="ruleAnalysisPanel">
+                    <div class="panel-heading"><h3 class="panel-title">当前规则分析结果</h3></div>
+                    <div class="panel-body">
+                        <% const trendKey = qimen.analysis && qimen.analysis.overallJiXiong || 'ping'; %>
+                        <% const trendText = qimen.analysis && qimen.analysis.overallJiXiongText || '平'; %>
+                        <% const trendNotes = {da_ji:'把握重点，稳健推进', xiao_ji:'稳步推进为宜', ping:'守正观察，按计划行动', xiao_xiong:'放慢节奏，谨慎核对', da_xiong:'宜守不宜进，避免冒险'}; %>
+                        <div class="trend-status-card trend-<%= trendKey %>">
+                            <span>今日整体趋势</span>
+                            <strong><%= trendText %></strong>
+                            <small><%= trendNotes[trendKey] || trendNotes.ping %></small>
+                        </div>
+                        <% if (qimen.analysis && qimen.analysis.bestGong && qimen.jiuGongAnalysis[qimen.analysis.bestGong]) { %>
+                            <p class="best-direction-note"><strong>最有利方位：</strong><%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].direction || '' %>（<%= qimen.jiuGongAnalysis[qimen.analysis.bestGong].gongName || '' %>宫）</p>
+                        <% } %>
+                        <% if (qimen.analysis && Array.isArray(qimen.analysis.suggestions) && qimen.analysis.suggestions.length) { %>
+                            <strong>建议：</strong>
+                            <ul class="suggestion-list">
+                                <% qimen.analysis.suggestions.forEach(function(suggestion) { %><li><%= suggestion %></li><% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p>暂无建议。</p>
+                        <% } %>
+                        <% if (Array.isArray(qimen.geju) && qimen.geju.length) { %>
+                            <strong>格局：</strong>
+                            <ul class="geju-list">
+                                <% qimen.geju.forEach(function(item) { %>
+                                    <li><strong><%= item.name %></strong><% if (item.gong) { %>（<%= item.gong %>宫）<% } %>：<%= item.explain %></li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-success app-section app-section-primary">
+                    <div class="panel-heading"><h3 class="panel-title"><%= page.date %> 每日记录</h3></div>
+                    <div class="panel-body">
+                        <form id="dailyRecordForm">
+                            <input type="hidden" id="recordDate" value="<%= page.date %>">
+                            <input type="hidden" id="panTime" value="<%= page.panTime %>">
+                            <div class="form-group">
+                                <label for="plan">今日计划</label>
+                                <textarea class="form-control" id="plan" rows="5" maxlength="100000"><%= record.plan || '' %></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="important">今日重要事项</label>
+                                <textarea class="form-control" id="important" rows="4" maxlength="100000"><%= record.important || '' %></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="result">实际完成情况</label>
+                                <textarea class="form-control" id="result" rows="5" maxlength="100000"><%= record.result || '' %></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="review">今日复盘</label>
+                                <textarea class="form-control" id="review" rows="5" maxlength="100000"><%= record.review || '' %></textarea>
+                            </div>
+                            <button class="btn btn-primary btn-block" id="saveRecordButton" type="submit">保存</button>
+                            <p class="help-block" id="saveStatus" aria-live="polite"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="aiAssistantSection">
+            <div class="col-md-12">
+                <div class="panel panel-info ai-advice-panel app-section app-section-primary" data-has-advice="<%= aiAdvice ? 'true' : 'false' %>">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">AI 今日助手 <span class="label label-info">AI 辅助建议</span></h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="ai-boundary-note">AI 不参与奇门排盘计算；以下内容仅基于已生成盘面、传统规则分析和你的计划进行整理。</p>
+                        <% if (aiLoadError) { %>
+                            <div class="alert alert-danger" role="alert"><%= aiLoadError %></div>
+                        <% } %>
+                        <div class="alert alert-warning <%= aiAdvice && aiAdvice.stale ? '' : 'hidden' %>" id="aiStaleWarning" role="alert">
+                            当前建议基于旧的计划内容，建议重新生成。
+                        </div>
+
+                        <% if (aiAdvice) { %>
+                            <div id="aiAdviceContent">
+                                <p><strong>今日总体建议：</strong><%= aiAdvice.output.summary %></p>
+                                <div><strong>优先事项：</strong>
+                                    <ol>
+                                        <% aiAdvice.output.priority.forEach(function(item) { %><li><%= item %></li><% }); %>
+                                    </ol>
+                                </div>
+                                <p><strong>时间安排建议：</strong><%= aiAdvice.output.timingAdvice %></p>
+                                <div><strong>注意事项：</strong>
+                                    <ul>
+                                        <% aiAdvice.output.riskNotes.forEach(function(item) { %><li><%= item %></li><% }); %>
+                                    </ul>
+                                </div>
+                                <p><strong>结合今日计划的建议：</strong><%= aiAdvice.output.planSuggestion %></p>
+                                <p class="text-muted ai-generated-meta">生成时间：<%= aiAdvice.generatedAt %>　模型：<%= aiAdvice.model %></p>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted" id="aiEmptyState">尚未生成今日建议。请先保存今日计划和重要事项，再点击下方按钮。</p>
+                        <% } %>
+
+                        <button class="btn btn-primary" id="generateAiAdviceButton" type="button" data-date="<%= page.date %>">生成今日建议</button>
+                        <span class="settings-status" id="aiAdviceStatus" aria-live="polite"></span>
+                        <p class="ai-disclaimer">传统术数内容仅作文化和娱乐参考</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (settings.showGongDetails) { %>
+        <div class="row" id="gongDetailsPanel">
+            <div class="col-md-12">
+                <div class="panel panel-default app-section app-section-primary">
+                    <div class="panel-heading"><h3 class="panel-title">九宫详解</h3></div>
+                    <div class="panel-body">
+                        <div class="gong-details">
+                            <% for (let gong = 1; gong <= 9; gong++) { const detail = qimen.jiuGongAnalysis[gong]; %>
+                                <div class="col-md-4">
+                                    <div class="panel panel-<%= detail.jiXiong && detail.jiXiong.includes('ji') ? 'success' : detail.jiXiong === 'ping' ? 'info' : 'danger' %>">
+                                        <div class="panel-heading"><h4 class="panel-title"><%= gong %>-<%= detail.gongName || '' %></h4></div>
+                                        <div class="panel-body">
+                                            <p><strong>方位：</strong><%= detail.direction || '' %></p>
+                                            <p><strong>九星：</strong><%= detail.xing || '' %>　<strong>八门：</strong><%= detail.men || '' %></p>
+                                            <p><strong>八神：</strong><%= detail.shen || '' %></p>
+                                            <p class="gong-explain"><%= detail.explain || '暂无解释' %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <footer class="footer"><div class="container"><p class="text-muted">每日奇门助手 V<%= appVersion %></p></div></footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/today.js"></script>
+    <script src="js/ai-today.js"></script>
+</body>
+</html>

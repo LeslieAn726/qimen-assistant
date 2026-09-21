@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> - 每日奇门助手</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+</head>
+<body>
+    <%- include('navigation', {activePage: ''}) %>
+    <main class="container error-page">
+        <div class="alert alert-danger" role="alert">
+            <h3><%= title %></h3>
+            <p><%= message %></p>
+        </div>
+        <p class="text-center"><a class="btn btn-default" href="/settings">前往设置与备份</a></p>
+    </main>
+</body>
+</html>

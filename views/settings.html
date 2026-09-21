@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>设置 - 每日奇门助手</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/theme-dark-star.css">
+</head>
+<body class="theme-dark-star page-settings">
+    <%- include('navigation', {activePage: 'settings'}) %>
+
+    <main class="container settings-page">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h2 class="page-title text-center">应用设置</h2>
+                <% if (settingsLoadError) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <strong>设置文件需要恢复：</strong><%= settingsLoadError %>
+                        请在下方选择一个有效备份恢复；恢复前仍会原样保存当前损坏文件。
+                    </div>
+                <% } %>
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">应用信息</h3></div>
+                    <div class="panel-body settings-summary">
+                        <dl class="dl-horizontal">
+                            <dt>应用名称</dt><dd><%= appName %></dd>
+                            <dt>当前版本</dt><dd><%= version %></dd>
+                            <dt>数据存储模式</dt><dd><%= storageMode === 'desktop-userData' ? '桌面版用户数据目录' : 'Web 版项目数据目录' %></dd>
+                            <dt>数据备份目录</dt><dd><code class="path-value"><%= backupDirectory %></code></dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">使用偏好</h3></div>
+                    <div class="panel-body">
+                        <form id="settingsForm">
+                            <div class="form-group">
+                                <label for="startupPage">启动时直接进入今日助手</label>
+                                <select class="form-control" id="startupPage">
+                                    <option value="today" <%= settings.startupPage === 'today' ? 'selected' : '' %>>是，进入今日助手</option>
+                                    <option value="history" <%= settings.startupPage === 'history' ? 'selected' : '' %>>否，进入历史记录</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dailyReferenceTime">每日默认参考时间</label>
+                                <input class="form-control" id="dailyReferenceTime" type="time" value="<%= settings.dailyReferenceTime %>" required>
+                                <p class="help-block">为后续每日提醒与自动排盘功能预留；当前实时盘仍使用当前时间。</p>
+                            </div>
+                            <div class="checkbox">
+                                <label><input id="showRuleAnalysis" type="checkbox" <%= settings.showRuleAnalysis ? 'checked' : '' %>> 显示规则分析</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input id="showGongDetails" type="checkbox" <%= settings.showGongDetails ? 'checked' : '' %>> 显示九宫详解</label>
+                            </div>
+                            <button class="btn btn-primary" id="saveSettingsButton" type="submit">保存设置</button>
+                            <span class="settings-status" id="settingsStatus" aria-live="polite"></span>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel panel-info" id="aiSettingsPanel">
+                    <div class="panel-heading"><h3 class="panel-title">AI 今日助手</h3></div>
+                    <div class="panel-body">
+                        <p class="text-muted">AI 只读取系统已经生成的今日盘面、传统规则分析、今日计划和重要事项，不参与排盘计算。</p>
+                        <% if (aiSettingsLoadError) { %>
+                            <div class="alert alert-danger" role="alert"><%= aiSettingsLoadError %></div>
+                        <% } %>
+                        <form id="aiSettingsForm">
+                            <div class="checkbox">
+                                <label><input id="aiEnabled" type="checkbox" <%= aiSettings.enabled ? 'checked' : '' %>> 启用 AI 今日助手</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="aiBaseUrl">OpenAI-compatible Base URL</label>
+                                <input class="form-control" id="aiBaseUrl" type="url" maxlength="2048" value="<%= aiSettings.baseUrl %>" placeholder="例如：https://api.openai.com/v1">
+                            </div>
+                            <div class="form-group">
+                                <label for="aiModel">Model</label>
+                                <input class="form-control" id="aiModel" type="text" maxlength="200" value="<%= aiSettings.model %>" placeholder="服务商提供的模型名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="aiApiKey">API Key</label>
+                                <input class="form-control" id="aiApiKey" type="password" maxlength="4096" autocomplete="new-password" placeholder="<%= aiSettings.apiKeyConfigured ? 'API Key 已配置；留空将保持不变' : '请输入 API Key' %>">
+                                <p class="help-block"><%= aiSettings.apiKeyConfigured ? 'API Key 已配置。页面不会读取或显示完整密钥。' : 'API Key 尚未配置。' %></p>
+                            </div>
+                            <% if (aiSettings.apiKeyConfigured) { %>
+                            <div class="checkbox">
+                                <label><input id="clearAiApiKey" type="checkbox"> 清除当前已配置的 API Key</label>
+                            </div>
+                            <% } %>
+                            <button class="btn btn-primary" id="saveAiSettingsButton" type="submit">保存 AI 设置</button>
+                            <span class="settings-status" id="aiSettingsStatus" aria-live="polite"></span>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel panel-warning">
+                    <div class="panel-heading"><h3 class="panel-title">数据备份与恢复</h3></div>
+                    <div class="panel-body">
+                        <p>每份备份同时包含每日记录和应用设置。恢复前会自动保存当前数据，不会删除其他备份。</p>
+                        <button class="btn btn-primary" id="createBackupButton" type="button">立即备份</button>
+                        <span class="settings-status" id="backupStatus" aria-live="polite"></span>
+
+                        <hr>
+                        <h4>已有备份</h4>
+                        <% if (backups.length) { %>
+                            <div class="list-group backup-list">
+                                <% backups.forEach(function(backup) { %>
+                                    <div class="list-group-item">
+                                        <div class="backup-row">
+                                            <div>
+                                                <strong><%= backup.name %></strong>
+                                                <% if (!backup.complete) { %><span class="label label-danger">文件不完整</span><% } %>
+                                            </div>
+                                            <button class="btn btn-default btn-sm restore-backup-button" type="button" data-backup="<%= backup.name %>" <%= backup.complete ? '' : 'disabled' %>>恢复此备份</button>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted">尚未创建备份。</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer"><div class="container"><p class="text-muted">每日奇门助手 V<%= version %></p></div></footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>

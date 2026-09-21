@@ -1,0 +1,49 @@
+appId: com.qimen.assistant
+productName: 每日奇门助手
+asar: true
+electronDist: node_modules/electron/dist
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - app.js
+  - assets/**/*
+  - "!assets/icon-source.png"
+  - ai/**/*
+  - constants/**/*
+  - electron/**/*
+  - lib/**/*
+  - services/**/*
+  - storage/**/*
+  - views/**/*
+  - public/**/*
+  - LICENSE
+  - THIRD_PARTY_NOTICES.md
+  - package.json
+  - "!data/daily-records.json"
+  - "!data/settings.json"
+  - "!data/backups/**/*"
+  - "!test/**/*"
+  - "!README*"
+  - "!archive/**/*"
+
+win:
+  icon: assets/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: "${productName}-Setup-${version}.${ext}"
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: 每日奇门助手
+  runAfterFinish: true
+  deleteAppDataOnUninstall: false

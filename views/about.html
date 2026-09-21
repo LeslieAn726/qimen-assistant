@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>关于 - 每日奇门助手</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/theme-dark-star.css">
+</head>
+<body class="theme-dark-star page-about">
+    <%- include('navigation', {activePage: 'about'}) %>
+    <main class="container about-page">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h2 class="page-title text-center">关于每日奇门助手</h2>
+                <div class="panel panel-default">
+                    <div class="panel-body text-center product-about">
+                        <h3><%= appName %></h3>
+                        <p class="lead">版本 <%= version %></p>
+                        <p>基础排盘项目：<strong>qfdk/qimen</strong></p>
+                        <p>本软件基于开源奇门排盘项目二次开发，保留并感谢原项目作者与贡献者的工作。</p>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">原项目许可证与版权信息</h3></div>
+                    <div class="panel-body"><pre class="license-text"><%= license %></pre></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer"><div class="container"><p class="text-muted">每日奇门助手 V<%= version %></p></div></footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

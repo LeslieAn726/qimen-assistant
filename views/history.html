@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>历史记录 - 每日奇门助手</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-new.css">
+    <link rel="stylesheet" href="css/theme-dark-star.css">
+</head>
+<body class="theme-dark-star page-history">
+    <%- include('navigation', {activePage: 'history'}) %>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2 class="page-title text-center">历史记录</h2>
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">每日记录列表</h3></div>
+                    <div class="panel-body">
+                        <% if (records.length) { %>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>日期</th>
+                                            <th>今日计划</th>
+                                            <th>实际完成情况</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% records.forEach(function(record) { %>
+                                            <tr>
+                                                <td><%= record.date %></td>
+                                                <td>
+                                                    <span class="label label-<%= record.hasPlan ? 'success' : 'default' %>">
+                                                        <%= record.hasPlan ? '已填写' : '未填写' %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="label label-<%= record.hasResult ? 'success' : 'default' %>">
+                                                        <%= record.hasResult ? '已填写' : '未填写' %>
+                                                    </span>
+                                                </td>
+                                                <td><a class="btn btn-primary btn-xs" href="/today?date=<%= encodeURIComponent(record.date) %>">查看</a></td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center">
+                                <p class="text-muted">还没有每日记录。</p>
+                                <a class="btn btn-primary" href="/today">前往今日助手</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="container"><p class="text-muted">每日奇门助手 V<%= appVersion %></p></div></footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

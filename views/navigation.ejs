@@ -1,0 +1,23 @@
+<nav class="navbar navbar-inverse navbar-fixed-top app-navbar" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/today">每日奇门助手</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li class="<%= activePage === 'today' ? 'active' : '' %>"><a href="/today">今日助手</a></li>
+                <li class="<%= activePage === 'history' ? 'active' : '' %>"><a href="/history">历史记录</a></li>
+                <li class="<%= activePage === 'realtime' ? 'active' : '' %>"><a href="/">实时排盘</a></li>
+                <li class="<%= activePage === 'custom' ? 'active' : '' %>"><a href="/custom">自定义排盘</a></li>
+                <li class="<%= activePage === 'settings' ? 'active' : '' %>"><a href="/settings">设置</a></li>
+                <li class="<%= activePage === 'about' ? 'active' : '' %>"><a href="/about">关于</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
