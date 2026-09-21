@@ -136,7 +136,10 @@ test('受保护的奇门核心算法文件哈希保持不变', async () => {
         'bashen.js': '7F054DF4E8A380DEE69C5490D4A93BF780B7043511FD7D684F9C4D2CC63E9F64'
     };
     for (const [filename, hash] of Object.entries(expected)) {
-        const source = await fs.readFile(path.join(ROOT, 'lib', filename));
-        assert.equal(crypto.createHash('sha256').update(source).digest('hex').toUpperCase(), hash, filename);
+        const source = await fs.readFile(path.join(ROOT, 'lib', filename), 'utf8');
+        // Git may check out text as CRLF on Windows runners. Protect the
+        // algorithm content while keeping the checksum independent of EOL style.
+        const normalizedSource = source.replace(/\r\n?/g, '\n');
+        assert.equal(crypto.createHash('sha256').update(normalizedSource).digest('hex').toUpperCase(), hash, filename);
     }
 });
